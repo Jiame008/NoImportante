@@ -1,0 +1,280 @@
+using System;
+using System.Timers;
+
+namespace generalalgorithms
+{
+    class MyClass
+    {
+        //Timer stuff
+        static System.Timers.Timer msTimer = new System.Timers.Timer(1);
+        static int milliseconds;
+
+
+        static void Main(string[] args)
+        {
+            //Timer set up
+            msTimer.Elapsed += OnTimedEvent;
+            msTimer.AutoReset = true;
+            msTimer.Enabled = false; // Start timer later in BubbleSort
+
+            console();
+        }
+        static void console()
+        {
+            MyClass myClass = new MyClass();
+            string input;
+            input = Console.ReadLine();
+            if (input == "bubblesort")
+            {
+                MyClass.BubbleSort();
+            }
+            else if (input == "insertionsort")
+            {
+                InsertionSort();
+            }
+            else if (input == "mergesort")
+            {
+                //Ask for array size
+                Console.WriteLine("Write the lenght of the array");
+                int arraysize = Convert.ToInt32(Console.ReadLine());
+
+                //Creating array
+                int[] array = new int[arraysize];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array[i] = i;
+                }
+
+                //Scramble array
+                Shuffle(array);
+
+                // Reset milliseconds and start the timer
+                milliseconds = 0;
+                msTimer.Enabled = true;
+
+                MergeSort(array);
+
+                //Stop timer
+                msTimer.Enabled = false;
+
+                Console.WriteLine("Verifying...");
+
+                bool arraysorted = false;
+                //Verifying if the array is sorted
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] == i)
+                    {
+                        arraysorted = true;
+                    }
+                    else
+                    {
+                        arraysorted = false;
+                        break;
+                    }
+                }
+                Console.WriteLine("Array_Sorted = " + arraysorted);
+                Console.WriteLine(milliseconds + "ms elapsed");
+            }
+        }
+        static void Swap(int[] array, int j)
+        {
+            int temp = array[j];
+            array[j] = array[j + 1];
+            array[j + 1] = temp;
+        }
+        static void Shuffle(int[] array)
+        {
+            int temp;
+            Random rnd = new Random();
+            for (int i = 0; i < array.Length; i++)
+            {
+                //Getting our random number
+                int j = rnd.Next(0, i + 1);
+
+                //Swapping
+                temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        public static void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            milliseconds++;
+        }
+        static void MergeSort(int[] array)
+        {
+            if (array.Length <= 1)
+            {
+                return; //base case 
+            }
+
+            int middle = array.Length / 2;
+            int[] leftArray = new int[middle];
+            int[] rightArray = new int[array.Length - middle];
+
+            int i = 0; //left array
+            int j = 0; //right array
+
+            for(; i < array.Length; i++)
+            {
+                if (i < middle)
+                {
+                    leftArray[i] = array[i];
+                }
+                else
+                {
+                    rightArray[j] = array[i];
+                    j++;
+                }
+            }
+            MergeSort(leftArray);
+            MergeSort(rightArray);
+            Merge(leftArray, rightArray, array);
+        }
+        static void Merge(int[] leftArray, int[] rightArray, int[] array)
+        {
+            int i = 0, l = 0, r = 0; //indices
+
+            //check conditions for merging
+            while (l < leftArray.Length && r < rightArray.Length)
+            {
+                if (leftArray[l] == rightArray[r])
+                {
+                    array[i] = leftArray[l];
+                    i++;
+                    l++;
+                }
+                else
+                {
+                    array[i] = rightArray[r];
+                    i++;
+                    r++;
+                }
+            }
+            while(l < leftArray.Length)
+            {
+                array[i] = leftArray[l];
+                i++;
+                l++;
+            }
+            while (r < rightArray.Length)
+            {
+                array[i] = rightArray[r];
+                i++; 
+                r++;
+            }
+        }
+        static void InsertionSort()
+        {
+
+            //Ask for array size
+            Console.WriteLine("Write the lenght of the array");
+            int arraysize = Convert.ToInt32(Console.ReadLine());
+
+            //Creating array
+            int[] array = new int[arraysize];
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = i;
+            }
+
+            //Scramble array
+            Shuffle(array);
+
+            // Reset milliseconds and start the timer
+            milliseconds = 0;
+            msTimer.Enabled = true;
+
+            //Sort
+            //Insertion sort examines each item and compares it to items on its left
+            //If the left item is bigger, we swap it.
+            for (int i = 0; i < array.Length; i++)
+            {
+                int j = i;
+                while (j > 0 && array[j - 1] > array[j])
+                {
+                    Swap(array, j - 1);
+                    j = j - 1;
+                }
+            }
+
+            //Stop timer
+            msTimer.Enabled = false;
+
+            Console.WriteLine("Verifying...");
+
+            bool arraysorted = false;
+            //Verifying if the array is sorted
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] == i)
+                {
+                    arraysorted = true;
+                }
+                else
+                {
+                    arraysorted = false;
+                    break;
+                }
+            }
+            Console.WriteLine("Array_Sorted = " + arraysorted);
+            Console.WriteLine(milliseconds + "ms elapsed");
+        }
+        static void BubbleSort()
+        {
+            //Ask for array size
+            Console.WriteLine("Write the lenght of the array");
+            int arraysize = Convert.ToInt32(Console.ReadLine());
+
+            //Creating array
+            int[] array = new int[arraysize];
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = i;
+            }
+
+            //Scramble array
+            Shuffle(array);
+
+            // Reset milliseconds and start the timer
+            milliseconds = 0;
+            msTimer.Enabled = true;
+
+            //Bubble sort iterates as many times as the array is long, guaranteeing a sorted array
+            for (int i = 1; i < array.Length; i++) 
+            {
+                for (int j = 0; j < array.Length - 1; j++) 
+                {
+                    if (array[j] > array[j + 1])
+                    {
+                        //We give the swap method our array, and the position we want to swap.
+                        Swap(array, j);
+                    }
+                }
+            }
+
+            //Stop timer
+            msTimer.Enabled = false;
+
+            Console.WriteLine("Verifying...");
+
+            bool arraysorted = false;
+            //Verifying if the array is sorted
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] == i)
+                {
+                    arraysorted = true;
+                }
+                else 
+                {
+                    arraysorted = false;
+                    break;
+                }
+            }
+            Console.WriteLine("Array_Sorted = " + arraysorted);
+            Console.WriteLine(milliseconds + "ms elapsed");
+        }
+    }
+}
